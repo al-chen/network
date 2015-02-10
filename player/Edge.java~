@@ -1,0 +1,22 @@
+/* Edge.java  */
+
+package player;
+
+public class Edge implements Comparable<Object>{
+    
+    protected Edge from;
+    protected Edge to;
+    
+    /*
+     * 
+     */
+    protected Edge() {
+        from = null;
+        to = null;
+    }
+    
+    /*
+     * 
+     */
+    public Edge(
+    

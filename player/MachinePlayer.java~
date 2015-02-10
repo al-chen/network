@@ -1,0 +1,140 @@
+/* MachinePlayer.java */
+
+package player;
+
+/**
+ *  An implementation of an automatic Network player.  Keeps track of moves
+ *  made by both players.  Can select a move for itself.
+ */
+public class MachinePlayer extends Player {
+
+    protected int myColor;
+    protected int oppColor;
+    protected Board board;
+    
+  // Creates a machine player with the given color.  Color is either 0 (black)
+  // or 1 (white).  (White has the first move.)
+  public MachinePlayer(int color) {
+  }
+
+  // Creates a machine player with the given color and search depth.  Color is
+  // either 0 (black) or 1 (white).  (White has the first move.)
+  public MachinePlayer(int color, int searchDepth) {
+  }
+
+  // Returns a new move by "this" player.  Internally records the move (updates
+  // the internal game board) as a move by "this" player.
+  public Move chooseMove() {
+    return new Move();
+  } 
+
+  // If the Move m is legal, records the move as a move by the opponent
+  // (updates the internal game board) and returns true.  If the move is
+  // illegal, returns false without modifying the internal state of "this"
+  // player.  This method allows your opponents to inform you of their moves.
+  public boolean opponentMove(Move m) {
+    return false;
+  }
+
+  // If the Move m is legal, records the move as a move by "this" player
+  // (updates the internal game board) and returns true.  If the move is
+  // illegal, returns false without modifying the internal state of "this"
+  // player.  This method is used to help set up "Network problems" for your
+  // player to solve.
+  public boolean forceMove(Move m) {
+    return false;
+  }
+  
+  /**
+   * In MachinePlayer.java
+   * Determine if a move is valid per the rules of the game
+   * Target cell must be empty
+   * Cannot be in corner, opponent's goal, or in cluster
+   *
+   * @param m: a move
+   * @param color: color of the chip
+   * @return true if the move is valid
+   */
+  public boolean isValidMove(Move m, int color) {
+      
+      if (color == Board.BLACK) {
+          if ((m.x1 == 0 || m.x1 == 7) && (m.y1 == 1 || m.y1 == 2 || m.y1 == 3 || m.y1 == 4 || m.y1 == 5 || m.y1 == 6)) {
+              return false;
+          } else if (color == Board.WHITE) {
+              if ((m.y1 == 0 || m.y1 == 7) && (m.x1 == 1 || m.x1 == 2 || m.x1 == 3 || m.x1 == 4 || m.x1 == 5 || m.x1 == 6)) {
+                  return false;
+              }
+          }
+      }
+      
+      if (m.moveKind == Move.ADD) {
+          if (board.getCell(m.x1, m.y1) != null) {
+              return false;
+          }
+      } else if (m.moveKind == Move.STEP) {
+          if (board.getCell(m.x2, m.y2) != null) {
+              return false;
+          }
+      }
+      return true;
+  }
+  
+  /*
+   * 
+   */
+  public Cell[] neighbors(Move m, int color) {
+      Cell[] n = new Cell[8];
+      int index = 0;
+      if (m.x1-1 >= 0 && m.x1-1 < Board.GAMESIZE &&
+          m.y1-1 >= 0 && m.y1-1 < Board.GAMESIZE) {
+          if (board.getCell(x-1, y-1) != null && board.getCell(x-1, y-1).getColor() == color) {
+              n[index] = board.getCell(x-1, y-1);
+              index++;
+          }
+      }
+      
+      
+      
+      
+      
+      
+      return n;
+  }
+  
+  /**
+   * In MachinePlayer.java
+   * Generate a list of all valid and possible moves for a color
+   *
+   * @param board: board that the chip is on
+   * @param color: color of the chip
+   * @return a list of moves
+   */
+  public Move[] possibleMoves(Board board, int color) {
+      return null;
+  }
+  
+  /**
+   * In MachinePlayer.java
+   * An evaluation function that holistically determines the value of cells of possible moves
+   *
+   * @param m: a move
+   * @param color: color of the chip
+   * @return an integer score of the move
+   */
+  public int evalMove(Move m, int color) {
+      return 0;
+  }
+
+  /**
+   * In MachinePlayer.java
+   * Peform a minimax tree search using alpha-beta pruning
+   *
+   * @param moveList: a list of possible moves
+   * @param color: color of the chip
+   * @return best move available
+   */
+  public Move minimax(Move[] moveList, int color) {
+      return null;
+  }
+  
+}

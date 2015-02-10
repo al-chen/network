@@ -1,0 +1,71 @@
+/* Board.java  */
+
+package player;
+
+public class Board {
+    
+    public static final int CORNER = 0;
+    public static final int WHITE = 1;
+    public static final int BLACK = 2;
+    public static final int GAMESIZE = 8;
+    public static final int MAXSTEPS = 10;
+    
+    protected int steps;
+    protected int oppSteps;
+    
+    protected Cell[][] board = new Cell[GAMESIZE][GAMESIZE];
+    
+    public Board() {
+        board[0][0] = new Cell(0, 0, CORNER);
+        board[0][7] = new Cell(0, 7, CORNER);
+        board[7][0] = new Cell(7, 0, CORNER);
+        board[7][7] = new Cell(7, 7, CORNER);
+    }
+  
+    public Cell getCell(int x, int y) {
+        return board[x][y];
+    }
+    
+    public void setCell(Cell cell) {
+        board[cell.getX()][cell.getY()] = cell;
+    }
+    
+    public void moveCell(Cell cell, int newX, int newY) {
+        board[cell.getX()][cell.getY()] = null;
+        cell.setX(newX);
+        cell.setY(newY);
+        board[newX][newY] = cell;
+    }
+    
+    public int getSteps() {
+        return steps;
+    }
+    
+    public int getOppSteps() {
+        return oppSteps;
+    }
+    
+    /**
+     * In Board.java
+     * Find connections for a particular cell of color
+     *
+     * @param cell: a cell
+     * @return a list of cells
+     */
+    public Cell[] connectionFinder(Cell cell) {
+        return null;
+    }
+    
+    /**
+     * In Board.java
+     * Determine if a network exists for a color
+     * Use depth first search with pathfinding
+     *
+     * @param color: color that we are looking for
+     * @return true if there is a winning network for color
+     */
+    public boolean isWin(int color) {
+        return false;
+    }
+    
+}

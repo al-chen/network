@@ -1,0 +1,380 @@
+/* HashTableChained.java */
+
+package dict;
+import list.DList;
+import list.DListNode;
+import list.List;
+import list.ListNode;
+import list.InvalidNodeException;
+
+/**
+ *  HashTableChained implements a Dictionary as a hash table with chaining.
+ *  All objects used as keys must have a valid hashCode() method, which is
+ *  used to determine which bucket of the hash table an entry is stored in.
+ *  Each object's hashCode() is presumed to return an int between
+ *  Integer.MIN_VALUE and Integer.MAX_VALUE.  The HashTableChained class
+ *  implements only the compression function, which maps the hash code to
+ *  a bucket in the table's range.
+ *
+ *  DO NOT CHANGE ANY PROTOTYPES IN THIS FILE.
+ **/
+
+public class HashTableChained implements Dictionary {
+
+  /**
+   *  Place any data fields here.
+   **/
+
+    protected static final int DEFAULTBUCKETS = 101;
+    private int size;
+    private int numEntries;
+    private DList[] table;
+
+  /** 
+   *  Construct a new empty hash table intended to hold roughly sizeEstimate
+   *  entries.  (The precise number of buckets is up to you, but we recommend
+   *  you use a prime number, and shoot for a load factor between 0.5 and 1.)
+   **/
+
+  public HashTableChained(int sizeEstimate) {
+    // Your solution here.
+      //System.out.println("sizeEstimate:" + sizeEstimate);
+      size = sizeEstimate;
+      if (size % 2 == 0) {
+          size++;
+      } else {
+          size = size + 2;
+      }
+      for (int i = size; i < sizeEstimate * 2; i = i + 2) {
+        if (isPrime(i)) {
+          size = i;
+          break;
+        }
+      }
+      //if (! find) {
+      //  System.out.println("no prime found");
+      //}
+      //System.out.println("prime size:" + size);
+      table = new DList[size];
+  }
+
+  /** 
+   *  Construct a new empty hash table with a default size.  Say, a prime in
+   *  the neighborhood of 100.
+   **/
+
+  public HashTableChained() {
+    // Your solution here.
+      size = DEFAULTBUCKETS;
+      table = new DList[size];
+  }
+
+  /**
+   * Checks if n is prime
+   */
+  public boolean isPrime(int n) {
+     if (n <= 1) {
+         return false;
+     }
+     for (int i = 2; i < Math.sqrt(n); i++) {
+         if (n % i == 0) {
+             return false;
+         }
+     }
+     return true;
+  }
+
+  /**
+   *  Converts a hash code in the range Integer.MIN_VALUE...Integer.MAX_VALUE
+   *  to a value in the range 0...(size of hash table) - 1.
+   *
+   *  This function should have package protection (so we can test it), and
+   *  should be used by insert, find, and remove.
+   **/
+
+  int compFunction(int code) {
+    // Replace the following line with your solution.
+      int a = 1;
+      int b = 2;
+      int p = 7919;
+      int N = size;
+      int x = ((a * code + b) % p) % N;
+      if (x < 0) {
+          x += N;
+      }
+      return x;
+  }
+
+  /** 
+   *  Returns the number of entries stored in the dictionary.  Entries with
+   *  the same key (or even the same key and value) each still count as
+   *  a separate entry.
+   *  @return number of entries in the dictionary.
+   **/
+
+  public int size() {
+    // Replace the following line with your solution.
+    return numEntries;
+  }
+
+  /** 
+   *  Tests if the dictionary is empty.
+   *
+   *  @return true if the dictionary has no entries; false otherwise.
+   **/
+
+  public boolean isEmpty() {
+    // Replace the following line with your solution.
+    return numEntries == 0;
+  }
+
+  /**
+   *  Create a new Entry object referencing the input key and associated value,
+   *  and insert the entry into the dictionary.  Return a reference to the new
+   *  entry.  Multiple entries with the same key (or even the same key and
+   *  value) can coexist in the dictionary.
+   *
+   *  This method should run in O(1) time if the number of collisions is small.
+   *
+   *  @param key the key by which the entry can be retrieved.
+   *  @param value an arbitrary object.
+   *  @return an entry containing the key and value.
+   **/
+
+  public Entry insert(Object key, Object value) {
+    // Replace the following line with your solution.
+      int i = compFunction(key.hashCode());
+      
+      Entry entry = new Entry();
+      entry.key = key;
+      entry.value = value;
+      
+      if (table[i] == null) {
+          //System.out.println("new insert i:" + i + " key:" + key.toString() + " value:" + value.toString());
+          table[i] = new DList();
+          table[i].insertFront(entry);
+      } else {
+          //System.out.println("*** insert i:" + i + " key:" + key.toString() + " value:" + value.toString());
+          table[i].insertBack(entry);
+      }
+      numEntries++;
+      return entry;
+  }
+
+  /** 
+   *  Search for an entry with the specified key.  If such an entry is found,
+   *  return it; otherwise return null.  If several entries have the specified
+   *  key, choose one arbitrarily and return it.
+   *
+   *  This method should run in O(1) time if the number of collisions is small.
+   *
+   *  @param key the search key.
+   *  @return an entry containing the key and an associated value, or null if
+   *          no entry contains the specified key.
+   **/
+
+  public Entry find(Object key) {
+    // Replace the following line with your solution.
+      int i = compFunction(key.hashCode());
+      if (table[i] != null && table[i].length() != 0) {
+          try {
+              ListNode node = table[i].front();
+              if (node.isValidNode()) {
+                  return (Entry) node.item();
+              } else {
+                  return null;
+              }
+          } catch (InvalidNodeException inEx) {
+              System.out.println(inEx.toString());
+              return null;
+          }
+      }
+      return null;
+  }
+
+  /** 
+   *  Remove an entry with the specified key.  If such an entry is found,
+   *  remove it from the table and return it; otherwise return null.
+   *  If several entries have the specified key, choose one arbitrarily, then
+   *  remove and return it.
+   *
+   *  This method should run in O(1) time if the number of collisions is small.
+   *
+   *  @param key the search key.
+   *  @return an entry containing the key and an associated value, or null if
+   *          no entry contains the specified key.
+   */
+
+  public Entry remove(Object key) {
+    // Replace the following line with your solution.
+      int i = compFunction(key.hashCode());
+      if (table[i] != null && table[i].length() != 0) {
+          ListNode node = table[i].front();
+          if (node.isValidNode()) {
+              try {
+                  node.remove();
+                  numEntries--;
+                  if (table[i].length() == 0) {
+                      table[i] = null;
+                  }
+                  return (Entry) node.item();
+              } catch (InvalidNodeException inEx) {
+                  //System.out.println(inEx.toString());
+                  return null;
+              }
+          } else {
+              return null;
+          }
+      }
+      return null;
+  }
+
+  /**
+   *  Remove all entries from the dictionary.
+   */
+  public void makeEmpty() {
+    // Your solution here.
+      for (int i = 0; i < table.length; i++) {
+          if (table[i] != null) {
+              table[i] = null;
+          }
+      }
+      numEntries = 0;
+  }
+
+  /*
+   * prints out how many entries are in the bucket list
+   * 
+   */
+  public void hashTableHistograph() {
+      int[] hist = new int[table.length];
+      for (int i = 0; i < table.length; i++) {
+          int cnt = 0;
+          if (table[i] != null) {
+              List l = table[i];
+              ListNode n;
+              try {
+                  for (n = l.front(); n.isValidNode(); n = n.next()) {
+                      cnt++;
+                  }
+              } catch (InvalidNodeException inEx) {
+                  System.out.println(inEx.toString());
+              }
+          }
+          hist[i] = cnt;
+      }
+      for (int j = 0; j < table.length; j++) {
+        System.out.println("bucket:" + j + " count:" + hist[j]);
+      }
+  }
+
+  public static void main(String[] args) {
+      HashTableChained htc = new HashTableChained(11);
+      
+      htc.insert(new Integer(1), new Integer(1));
+      htc.insert(new Integer(2), new Integer(2));
+      htc.insert(new Integer(3), new Integer(3));
+      htc.insert(new Integer(4), new Integer(4));
+      htc.insert(new Integer(5), new Integer(5));
+      htc.insert(new Integer(6), new Integer(6));
+      htc.insert(new Integer(7), new Integer(7));
+      htc.insert(new Integer(8), new Integer(8));
+      htc.insert(new Integer(9), new Integer(9));
+      htc.insert(new Integer(10), new Integer(10));
+      htc.insert(new Integer(11), new Integer(11));
+      htc.insert(new Integer(12), new Integer(12));
+      //
+      htc.insert(new Integer(13), new Integer(13));
+      htc.insert(new Integer(14), new Integer(14));
+      htc.insert(new Integer(15), new Integer(15));
+      htc.insert(new Integer(16), new Integer(16));
+      htc.insert(new Integer(17), new Integer(17));
+      htc.insert(new Integer(18), new Integer(18));
+      htc.insert(new Integer(19), new Integer(19));
+      htc.insert(new Integer(20), new Integer(20));
+      htc.insert(new Integer(21), new Integer(21));
+      htc.insert(new Integer(22), new Integer(22));
+      htc.insert(new Integer(23), new Integer(23));
+      htc.insert(new Integer(24), new Integer(24));
+      //
+      
+      System.out.println("bucket size: " + htc.size);
+      System.out.println("hashtable numEntries: " + htc.numEntries);
+      
+      for (int i = 0; i < htc.table.length; i++) {
+          //????????
+          if (htc.table[i] != null) {
+              List l = htc.table[i];
+              ListNode n;
+              try {
+                  for (n = l.front(); n.isValidNode(); n = n.next()) {
+                      System.out.println("n.item() " + i + ": " + ((Entry) n.item()).key().toString() + " " + ((Entry) n.item()).value().toString());
+                  }
+              } catch (InvalidNodeException inEx) {
+                  System.out.println(inEx.toString());
+              }
+          } else {
+              System.out.println("n.item() " + i + ": null");
+          }
+      }
+      Entry e = htc.find(new Integer(1));
+      System.out.println("find Integer(1) Entry: " + e.key() + " " + e.value());
+      
+      System.out.println("remove Integer(8)");
+      System.out.println("remove Integer(1)");
+      htc.remove(new Integer(8));
+      htc.remove(new Integer(1));
+      
+      System.out.println("bucket size: " + htc.size);
+      System.out.println("hashtable numEntries: " + htc.numEntries);
+      
+      for (int i = 0; i < htc.table.length; i++) {
+          //????????
+          if (htc.table[i] != null) {
+              List l = htc.table[i];
+              ListNode n;
+              try {
+                  for (n = l.front(); n.isValidNode(); n = n.next()) {
+                      System.out.println("n.item() " + i + ": " + ((Entry) n.item()).key().toString() + " " + ((Entry) n.item()).value().toString());
+                  }
+              } catch (InvalidNodeException inEx) {
+                  System.out.println(inEx.toString());
+              }
+          } else {
+              System.out.println("n.item() " + i + ": null");
+          }
+      }
+      Entry e2 = htc.find(new Integer(1));
+      if (e2 != null) {
+          System.out.println("find Integer(1) Entry: " + e2.key() + " " + e2.value());
+      } else {
+          System.out.println("find e2 null");
+      }
+      Entry e3 = htc.find(new Integer(15));
+      if (e3 != null) {
+          System.out.println("find Integer(15) Entry: " + e3.key() + " " + e3.value());
+      } else {
+          System.out.println("find e3 null");
+      }
+      
+      htc.makeEmpty();
+      for (int i = 0; i < htc.table.length; i++) {
+          //????????
+          if (htc.table[i] != null) {
+              List l = htc.table[i];
+              ListNode n;
+              try {
+                  for (n = l.front(); n.isValidNode(); n = n.next()) {
+                      System.out.println("n.item() " + i + ": " + ((Entry) n.item()).key().toString() + " " + ((Entry) n.item()).value().toString());
+                  }
+              } catch (InvalidNodeException inEx) {
+                  System.out.println(inEx.toString());
+              }
+          } else {
+              System.out.println("n.item() " + i + ": null");
+          }
+      }
+      
+  }    
+
+}

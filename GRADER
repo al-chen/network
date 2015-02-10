@@ -1,0 +1,228 @@
+                                     GRADER
+
+Name of student running submit: Alan Chen
+Login of student running submit: cs61b-os
+
+Second team member's name: Brandon Pang  
+Second team member's login: cs61b-pc
+
+Third team member's name (if any): Alicia Luengo-Kovac
+Third team member's login: cs61b-air
+
+IMPORTANT:  Once you've submitted Project 2 once, the same team member should
+submit always.  If a different teammate must submit, inform cs61b@cory.eecs of
+all the details.  Include a complete list of team members, and let us know
+which submission you want graded.
+
+If you've submitted your project once, or even written a substantial amount of
+code together, you may not change partners without the permission of the
+instructor.
+===============================================================================
+Does your program compile without errors?
+
+Yes
+
+Have you tested your program on the 61B lab machines?
+
+Yes
+
+Did you successfully implement game tree search?  Did you successfully
+implement alpha-beta pruning?  Are there any limitations on it?  What is the
+default number of search levels set by the one-parameter MachinePlayer
+constructor (or is it a variable-depth search)?
+
+Yes, we implemented both game tree search and alpha-beta pruning. After a search depth of 3 
+our machine player becomes slower. The default number of search levels is 2.  
+
+
+Describe your board evaluation function in some detail.
+
+The evaluation function takes in a game board, the current depth in minimax, and the color 
+whose win we are trying to optimize. First, the function checks if the board is a winning board. 
+If it is, it checks how many moves it took to get to that board (using the current depth), and 
+subtracts the number of moves it took from the maximum score. Similarly, the function checks if the 
+board is a losing board and adds the move it took to the minimum score. Otherwise, the score is 
+determined by if there is a piece in each goal area and how many connections each color has.
+
+
+Does your MachinePlayer use any special method of choosing the first few moves?
+
+No
+
+
+Is there anything else the graders should know to help them read your project?
+
+Please spend your time reading our project even if it may be long! :)
+
+
+Describe the classes, modules, and interfaces you designed before and while you
+implemented the project.  Your description should include:
+  -  A list of the classes your program uses.
+  -  A list of each of the "modules" used in or by MachinePlayer, similar to
+     the list in the "Teamwork" section of the README (but hopefully more
+     detailed).  (If you're using a list class, that should probably count as
+     a separate module.)
+  -  For each module, list the class(es) the module is implemented in.
+  -  For each module, say which of your team members implemented it.
+  -  For each module, describe its interface--specifically, the prototype and
+     behavior of each method that is available for external callers (outside
+     the module) to call.  Don't include methods that are only meant to be
+     called from within the module.
+
+     For each method, provide (1) a method prototype and (2) a complete,
+     unambiguous description of the behavior of the method/module.  This
+     description should also appear before the method in your code's comments.
+
+You will probably need to change some of your design decisions as you go; be
+sure to modify this file to reflect these changes before you submit your
+project.  Your design of classes and interfaces will be worth 10% of your
+grade.
+
+
+(1) Classes/Packages program will use:
+BestMove
+Board
+Cell
+Edge
+MachinePlayer
+Move
+Player
+Stack
+
+*package list (DList, DListNode, InvalidNodeException, List, ListNode)
+*package dict (Dictionary, Entry, HashTableChained)
+
+(2) Modules
+  (a) Determine if a move is valid per the rules of the game
+      [incldues specific methods for step moves and add moves]
+      Implemented in Board class by Alan
+  (b) Generate a list of all valid and possible moves for a color
+      Implemented in Board class by Alicia
+  (c) Find connections for a particular cell of color
+      Implemented in Board class by Brandon
+  (d) Determine if a network exists for a color using depth first search
+      Implemented in MachinePlayer class by Alan
+  (e) An evaluation function that heurstically determines the value of a board
+      Implemented in MachinePlayer class by Alicia
+  (f) Perform a minimax tree search using alpha-beta pruning
+      Implemented in MachinePlayer class by Brandon
+  (g) Provide List classes for MachinePlayer and Board to use to store routes, cells, moves, etc.
+      Implemented in list package by Brandon
+  (h) Provide a HashTable implemented using DLists for MachinePlayer and Board to use
+      Implemented in dict package by Alan
+
+(3) Interfaces for modules
+  (a)  /**
+        * protected isValidMove() method
+        * If the move is an add move, calls isValidAddMove.
+        * If the move is a step move, calls isValidStepMove.
+        *
+        * @param m: a Move to be checked for its validity
+        * @param color: the integer color of the chip to be used for this move
+        * @return a boolean value representing the success or failure of this move check
+        */
+        protected boolean isValidMove(Move m, int color)
+
+
+        /**
+        * protected isValidStepMove() method
+        * Clones the board, removes the cell to be moved, then calls isValidAddMove.
+        *
+        * @param m: a STEP Move to be checked for its validity
+        * @param color: the integer of the chip to be used for this step move
+        * @return a boolean value representing the success or failure for this step move check
+        */
+        protected boolean isValidStepMove(Move m, int color)
+         
+       /**
+        * protected isValidAddMove() method
+        * Checks if the board piece at target position does not already have a Cell
+        * Checks if target position is the goal area of the opposing color
+        * Checks for clusters
+        *
+        * @param x: column number to be checked if an ADD move is valid
+        * @param y: row number to be checked if an ADD move is valid
+        * @param color: the integer color of the chip to be used for this add move
+        * @return a boolean value representing the success or failure of this add move check
+        */
+        protected boolean isValidAddMove(int x, int y, int color)
+
+  (b)   /**
+         * Finds all possible add or step moves
+         * If steps < 10, availableMoves finds only add moves
+         * If steps >= 10, availableMoves finds only step moves
+         *
+         * @param color: the integer color of the chip
+         * @return DList all of possible moves for the given color
+         */
+         protected DList availableMoves(int color)
+
+  (c)   /**
+        * Find connections for a particular cell of color in all directions
+        * Stops when a cell of another color or an invalid cell position is reached.
+        *
+        * @param cell: a cell
+        * @return DList of cells linked to the cell
+        */
+        protected DList connectionFinder(Cell c)
+
+  (d)   /**
+         * In MachinePlayer.java
+         * A function that determines if a particular colored network was formed in the game board
+         * Uses depth first search
+         *
+         * @param gboard: a game board
+         * @param color: color of the chip
+         * @return a boolean value indicating if a network was formed for the color chip
+         */
+         public boolean findNetwork(Board gboard, int color)
+
+  (e)   /**
+         * In MachinePlayer.java
+         * An evaluation function that assigns a score to a board.
+         * The score is positive if the board favors the current player; negative if it favors the opponent
+         * If either player has a winning board, they are assigned a maximum score of (-)1000
+         *
+         * @param board: a board
+         * @param depth: what depth we're at in the minimax method
+         * @param color: what color the current player is
+         * @return an integer score of the board
+         */
+         public int heuristicEvaluation(Board gboard, int depth, int color)
+
+  (f)   /** 
+         * Uses game tree search and implements alpha beta pruning to provide the 
+         * best move possible
+         * In MachinePlayer.java
+         * 
+         * @param gboard: gameboard to perform minimax on
+         * @param color: the color belonging to player whos making a move
+         * @param alpha: highest possible value in alpha-beta pruning
+         * @param beta: lowest possible value in alpha-beta pruning
+         * @param depth: the depth that minimax is currently at
+         * @param maxDepth: the maximum depth that minimax will go to
+         * @return BestMove the best move
+         */
+         public BestMove miniMax(Board gboard, int color, int alpha, int beta, int depth, int maxDepth) {
+
+  (g)   /**
+         * A DList class that provides a working linked list for 
+         * MachinePlayer.java and Board.java to use. It is included 
+         * in a list package that also contains DListNode.java to create 
+         * the nodes and InvalidNodeException which catches node errors.
+         * It also contains List.java and ListNode.java which are the 
+         * parent class of DList and DListNode.
+         *
+         * Created in hw5, altered for pj2
+         * In list package
+         public class DList extends List
+  
+  (h)   /**
+         * A HashTableChained class that provides a working hash table
+         * for MachinePlayer.java and Board.java to use. It is included
+         * in a dict package that also contains Dictionary (the interface)
+         * and Entry which is the object that the hash table contains.
+         *
+         * Created in hw6, altered for pj2
+         * In dict package
+         public class HashTableChained implements Dictionary

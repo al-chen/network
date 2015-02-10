@@ -1,0 +1,49 @@
+/* Cell.java  */
+
+package player;
+
+public class Cell {
+
+    private int x;
+    private int y;
+    private int color;
+    private Board board;
+    
+    private Cell() {
+    }
+    
+    public Cell(int x, int y, int color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+    }
+    
+    public int getX() {
+        return x;
+    }
+    
+    public int getY() {
+        return y;
+    }
+    
+    public int getColor() {
+        return color;
+    }
+    
+    public Board getBoard() {
+        return board;
+    }
+    
+    public void setX(int newX) {
+        x = newX;
+    }
+    
+    public void setY(int newY) {
+        y = newY;
+    }
+    
+    public void setColor(int newColor) {
+        color = newColor;
+    }
+    
+}
